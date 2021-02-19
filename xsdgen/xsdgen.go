@@ -704,6 +704,8 @@ func (cfg *Config) genComplexType(t *xsd.ComplexType) ([]spec, error) {
 		}
 		if el.Plural {
 			base = &ast.ArrayType{Elt: base}
+		} else if _, ok := el.Type.(*xsd.ComplexType); ok {
+			base = &ast.StarExpr{X: base}
 		}
 		fields = append(fields, name, base, gen.String(tag))
 		if el.Default != "" || nonTrivialBuiltin(el.Type) {
@@ -744,6 +746,10 @@ func (cfg *Config) genComplexType(t *xsd.ComplexType) ([]spec, error) {
 			tag = fmt.Sprintf(`xml:"%s,attr%s"`, attr.Name.Local, options)
 		}
 		base, err := cfg.expr(attr.Type)
+		if _, ok := attr.Type.(*xsd.ComplexType); ok {
+			base = &ast.StarExpr{X: base}
+		}
+
 		if err != nil {
 			return nil, fmt.Errorf("%s attribute %s: %v", t.Name.Local, attr.Name.Local, err)
 		}
