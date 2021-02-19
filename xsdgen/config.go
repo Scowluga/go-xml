@@ -251,7 +251,7 @@ func Replace(pat, repl string) Option {
 				cfg.logf("Invalid regex %q passed to Replace", pat)
 				return name
 			}
-			r := reg.ReplaceAllString(name.Local, repl)
+			r := reg.ReplaceAllString(strings.Title(name.Local), repl)
 			if r != name.Local {
 				cfg.debugf("changed name %s -> %s", name.Local, r)
 			}
